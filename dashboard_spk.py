@@ -137,12 +137,10 @@ header {{visibility:hidden;}}
     margin-bottom:20px;
 }}
 
-/* Heading */
 h1,h2,h3 {{
     color:{accent};
 }}
 
-/* Responsive HP */
 @media (max-width:768px){{
     .header {{
         flex-direction:column;
@@ -168,6 +166,33 @@ h1,h2,h3 {{
 </style>
 """, unsafe_allow_html=True)
 
+# ================= NAVBAR =================
+st.markdown(f"""
+<div class="navbar">
+    <div class="nav-title">PalmWise</div>
+    <div class="nav-menu">
+        <span>Home</span>
+        <span>Dashboard</span>
+        <span>Analisis</span>
+        <span>About</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ================= HEADER =================
+st.markdown(f"""
+<div class="header">
+    <div class="logo-wrapper">
+        <img src="data:image/png;base64,{logo}">
+    </div>
+    <div>
+        <div class="title">PalmWise</div>
+        <div class="subtitle">
+            Smart Decision Support System for Oil Palm
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ================= DATABASE =================
 bibit_db = {
