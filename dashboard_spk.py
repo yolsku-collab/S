@@ -21,187 +21,150 @@ from sklearn.linear_model import LinearRegression
 st.set_page_config(layout="wide")
 
 # ✅ HEADER (logo + judul)
-import streamlit as st
 
-st.set_page_config(layout="wide")
+mode_theme = st.toggle("🌙 Dark Mode", value=True)
 
-# ================= GLOBAL STYLE =================
-st.markdown("""
+if mode_theme:
+    bg = "#020617"
+    secondary_bg = "#0f172a"
+    text = "#ffffff"
+    subtext = "#9ca3af"
+    accent = "#38bdf8"
+    glass = "rgba(255,255,255,0.06)"
+    border = "rgba(255,255,255,0.1)"
+    plotly_theme = "plotly_dark"
+else:
+    bg = "#f8fafc"
+    secondary_bg = "#ffffff"
+    text = "#0f172a"
+    subtext = "#475569"
+    accent = "#2563eb"
+    glass = "rgba(0,0,0,0.05)"
+    border = "rgba(0,0,0,0.1)"
+    plotly_theme = "plotly_white"
+
+st.markdown(f"""
 <style>
-.block-container {
-    padding-top: 0rem !important;
-}
-       header {visibility: hidden;}             
-/* Background */
-body {
-    background: linear-gradient(135deg, #020617, #0f172a);
-    color: white;
-}
+
+/* Background utama */
+[data-testid="stAppViewContainer"] {{
+    background: linear-gradient(135deg, {bg}, {secondary_bg});
+    color: {text};
+}}
+
+header {{visibility:hidden;}}
 
 /* Navbar */
-.navbar {
+.navbar {{
     display:flex;
     justify-content:space-between;
     align-items:center;
     padding:12px 30px;
     border-radius:16px;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    background:{glass};
+    backdrop-filter:blur(12px);
+    border:1px solid {border};
     margin-bottom:20px;
-}
+}}
 
-.nav-title {
+.nav-title {{
     font-size:20px;
     font-weight:600;
-}
+    color:{text};
+}}
 
-.nav-menu span {
+.nav-menu span {{
     margin-left:20px;
     cursor:pointer;
-    color:#9ca3af;
+    color:{subtext};
     transition:0.3s;
-}
+}}
 
-.nav-menu span:hover {
-    color:#38bdf8;
-}
+.nav-menu span:hover {{
+    color:{accent};
+}}
 
 /* Header */
-.header {
+.header {{
     display:flex;
     align-items:center;
     gap:30px;
     padding:30px;
     border-radius:20px;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(16px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-    animation: fadeIn 1s ease-in-out;
-}
-   
-/* Logo bulat */
-.logo-wrapper {
+    background:{glass};
+    backdrop-filter:blur(16px);
+    border:1px solid {border};
+}}
+
+/* Logo */
+.logo-wrapper {{
     width:150px;
     height:150px;
-    min-width:150px;     /* 🔥 biar tidak gepeng */
-    min-height:150px;    /* 🔥 biar tetap bulat */
+    min-width:150px;
+    min-height:150px;
     border-radius:50%;
     overflow:hidden;
-    flex-shrink: 0;      /* 🔥 kunci utama */
-    box-shadow: 0 0 25px rgba(56,189,248,0.5);
-    border:3px solid #38bdf8;
-}
+    flex-shrink:0;
+    border:3px solid {accent};
+}}
 
-.logo-wrapper img {
+.logo-wrapper img {{
     width:100%;
     height:100%;
     object-fit:cover;
-}
-/* Buat Tampilan HP */
-@media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        text-align: center;
-    }
+}}
 
-    .logo-wrapper {
+/* Title */
+.title {{
+    font-size:56px;
+    font-weight:800;
+    color:{text};
+}}
+
+.subtitle {{
+    font-size:20px;
+    color:{subtext};
+    max-width:700px;
+}}
+
+/* Glass */
+.glass {{
+    background:{glass};
+    border-radius:18px;
+    padding:20px;
+    backdrop-filter:blur(18px);
+    border:1px solid {border};
+    margin-bottom:20px;
+}}
+
+/* Heading */
+h1,h2,h3 {{
+    color:{accent};
+}}
+
+/* Responsive HP */
+@media (max-width:768px){{
+    .header {{
+        flex-direction:column;
+        text-align:center;
+    }}
+
+    .logo-wrapper {{
         width:110px;
         height:110px;
         min-width:110px;
         min-height:110px;
-    }
+    }}
 
-    .title {
+    .title {{
         font-size:32px;
-    }
+    }}
 
-    .subtitle {
+    .subtitle {{
         font-size:16px;
-    }
-           
-/* Title */
-.title {
-    font-size:56px;
-    font-weight:800;
-    margin-bottom:0px;
-    line-height:1.1;
-}
+    }}
+}}
 
-/* Subtitle */
-.subtitle {
-    font-size:20px;
-    text-align:justify;
-    text-align-last:left;
-    max-width:700px;
-    color:#9ca3af;
-    margin-top:2px;
-    line-height:1.4;
-}
-.header-text {
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-    
-}
-            
-/* Animasi */
-@keyframes fadeIn {
-    from {opacity:0; transform: translateY(20px);}
-    to {opacity:1; transform: translateY(0);}
-}
-</style>
-""", unsafe_allow_html=True)
-
-# ================= NAVBAR =================
-st.markdown("""
-<div class="navbar">
-    <div class="nav-title">PalmWise</div>
-    <div class="nav-menu">
-        <span>Home</span>
-        <span>Dashboard</span>
-        <span>Analisis</span>
-        <span>About</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# ================= HEADER =================
-st.markdown(f"""
-<div class="header">
-    <div class="logo-wrapper">
-    <img src="data:image/png;base64,{logo}">
-</div>
-    <div class="header-text">
-        <div class="title">PalmWise</div>
-        <div class="subtitle">
-            Smart Decision Support System for Oil Palm
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-# ================= UI GLASS =================
-st.markdown("""
-<style>
-body {
-    background: linear-gradient(135deg, #020617, #0f172a);
-    color: white;
-}
-.block-container {
-    padding-top: 0rem;
-}
-.glass {
-    background: rgba(255,255,255,0.06);
-    border-radius: 18px;
-    padding: 20px;
-    backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    margin-bottom: 20px;
-}
-h1,h2,h3 {
-    color: #38bdf8;
-}
 </style>
 """, unsafe_allow_html=True)
 
@@ -353,7 +316,7 @@ fig.add_trace(go.Scatter(
     textposition="top center"
 ))
 
-fig.update_layout(template="plotly_dark")
+fig.update_layout(template=plotly_theme)
 st.plotly_chart(fig, use_container_width=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
