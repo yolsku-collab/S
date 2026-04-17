@@ -1,3 +1,17 @@
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+
+import base64
+# convert gambar ke base64
+def get_base64(img_file):
+    with open(img_file, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+logo = get_base64("logo_palmwise.png")
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -6,6 +20,142 @@ from sklearn.linear_model import LinearRegression
 
 st.set_page_config(layout="wide")
 
+# ✅ HEADER (logo + judul)
+import streamlit as st
+
+st.set_page_config(layout="wide")
+
+# ================= GLOBAL STYLE =================
+st.markdown("""
+<style>
+.block-container {
+    padding-top: 0rem !important;
+}
+       header {visibility: hidden;}             
+/* Background */
+body {
+    background: linear-gradient(135deg, #020617, #0f172a);
+    color: white;
+}
+
+/* Navbar */
+.navbar {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 30px;
+    border-radius:16px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    margin-bottom:20px;
+}
+
+.nav-title {
+    font-size:20px;
+    font-weight:600;
+}
+
+.nav-menu span {
+    margin-left:20px;
+    cursor:pointer;
+    color:#9ca3af;
+    transition:0.3s;
+}
+
+.nav-menu span:hover {
+    color:#38bdf8;
+}
+
+/* Header */
+.header {
+    display:flex;
+    align-items:center;
+    gap:30px;
+    padding:30px;
+    border-radius:20px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Logo bulat */
+.logo-wrapper {
+    width:150px;
+    height:150px;
+    border-radius:50%;
+    overflow:hidden;
+    box-shadow: 0 0 25px rgba(56,189,248,0.5);
+    border:3px solid #38bdf8;
+}
+
+.logo-wrapper img {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+/* Title */
+.title {
+    font-size:56px;
+    font-weight:800;
+    margin-bottom:0px;
+    line-height:1.1;
+}
+
+/* Subtitle */
+.subtitle {
+    font-size:20px;
+    text-align:justify;
+    text-align-last:left;
+    max-width:700px;
+    color:#9ca3af;
+    margin-top:2px;
+    line-height:1.4;
+}
+.header-text {
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    
+}
+            
+/* Animasi */
+@keyframes fadeIn {
+    from {opacity:0; transform: translateY(20px);}
+    to {opacity:1; transform: translateY(0);}
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ================= NAVBAR =================
+st.markdown("""
+<div class="navbar">
+    <div class="nav-title">PalmWise</div>
+    <div class="nav-menu">
+        <span>Home</span>
+        <span>Dashboard</span>
+        <span>Analisis</span>
+        <span>About</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ================= HEADER =================
+st.markdown(f"""
+<div class="header">
+    <div class="logo-wrapper">
+    <img src="data:image/png;base64,{logo}">
+</div>
+    <div class="header-text">
+        <div class="title">PalmWise</div>
+        <div class="subtitle">
+            Smart Decision Support System for Oil Palm
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 # ================= UI GLASS =================
 st.markdown("""
 <style>
@@ -14,7 +164,7 @@ body {
     color: white;
 }
 .block-container {
-    padding-top: 1rem;
+    padding-top: 0rem;
 }
 .glass {
     background: rgba(255,255,255,0.06);
@@ -31,7 +181,6 @@ h1,h2,h3 {
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🌴 SPK Sawit AI (AHP + SAW + Agronomi + Ekonomi)")
 
 # ================= DATABASE =================
 bibit_db = {
@@ -231,6 +380,27 @@ st.write(f"""
 - ROI: {roi:.2f}%  
 """)
 
+# ================= EXPORT EXCEL =================
+def create_excel():
+    df = pd.DataFrame({
+        "Parameter": ["Tanah", "Pupuk", "Produksi", "ROI"],
+        "Nilai": [tanah, pupuk, produksi_ton, f"{roi:.2f}%"]
+    })
+
+    buffer = BytesIO()
+    df.to_excel(buffer, index=False, engine='openpyxl')
+    buffer.seek(0)
+    return buffer
+
+excel = create_excel()
+
+st.download_button(
+    label="📥 Download Excel",
+    data=excel,
+    file_name="laporan_spk_sawit.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
+
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ================= INSIGHT =================
@@ -243,3 +413,11 @@ Sistem menunjukkan bahwa kualitas lahan dan bibit sangat mempengaruhi hasil prod
 """)
 
 st.markdown('</div>', unsafe_allow_html=True)
+
+st.subheader("📊 KPI Dashboard")
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric("Jumlah Alternatif", len(df))
+col2.metric("Alternatif Terbaik", best["Alternatif"])
+col3.metric("Nilai SAW Tertinggi", round(best["Skor"], 3))
