@@ -79,13 +79,16 @@ body {
     box-shadow: 0 8px 30px rgba(0,0,0,0.4);
     animation: fadeIn 1s ease-in-out;
 }
-
+   
 /* Logo bulat */
 .logo-wrapper {
     width:150px;
     height:150px;
+    min-width:150px;     /* 🔥 biar tidak gepeng */
+    min-height:150px;    /* 🔥 biar tetap bulat */
     border-radius:50%;
     overflow:hidden;
+    flex-shrink: 0;      /* 🔥 kunci utama */
     box-shadow: 0 0 25px rgba(56,189,248,0.5);
     border:3px solid #38bdf8;
 }
@@ -95,7 +98,28 @@ body {
     height:100%;
     object-fit:cover;
 }
+/* Buat Tampilan HP */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        text-align: center;
+    }
 
+    .logo-wrapper {
+        width:110px;
+        height:110px;
+        min-width:110px;
+        min-height:110px;
+    }
+
+    .title {
+        font-size:32px;
+    }
+
+    .subtitle {
+        font-size:16px;
+    }
+           
 /* Title */
 .title {
     font-size:56px;
